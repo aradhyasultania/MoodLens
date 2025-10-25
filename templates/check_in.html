@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodLens - Guided Emotional Check-in</title>
+    <style>
+        :root {
+            --primary: #A8DADC;
+            --secondary: #B7C9A9;
+            --accent: #F4B9B2;
+            --background: #FAFAFA;
+            --text-primary: #2F2F2F;
+            --text-secondary: #707070;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .step.welcome {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .step.welcome h2 {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .step.welcome p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .question-title {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: var(--background);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .option.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .option-text {
+            font-size: 1.2rem;
+            margin-top: 8px;
+        }
+
+        .journaling-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .journaling-question {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .journaling-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid var(--background);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .journaling-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .journaling-textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .voice-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .voice-prompt {
+            background: var(--background);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .voice-prompt-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .voice-prompt-instruction {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .voice-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .btn:hover {
+            background: #9BB89A;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn.primary {
+            background: var(--accent);
+        }
+
+        .btn.primary:hover {
+            background: #E8A39B;
+        }
+
+        .btn.recording {
+            background: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #E0E0E0;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .analysis-step {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .analysis-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--background);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        .analysis-text {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .analysis-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .camera-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--background);
+            border-radius: 16px;
+        }
+
+        .camera-video-wrapper {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid var(--primary);
+            background: #000;
+        }
+
+        .camera-video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .camera-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .camera-button:hover {
+            background: #97C5C7;
+            transform: translateY(-2px);
+        }
+
+        .camera-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .camera-preview {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 20px auto;
+            display: block;
+            border: 4px solid var(--primary);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .question-card, .journaling-card, .voice-card {
+                padding: 20px;
+            }
+            
+            .option {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 MoodLens</h1>
+            <p>Guided Emotional Wellness Companion</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Welcome Step -->
+        <div class="step welcome active" id="welcomeStep">
+            <h2 id="welcomeMessage">Let's check in with how you're feeling right now</h2>
+            <p>This will take about 3-4 minutes. We'll start with some quick questions, then dive deeper with guided writing prompts.</p>
+            <button class="btn primary" onclick="startCheckIn()">Start Check-in</button>
+        </div>
+
+        <!-- Initial Questions Step -->
+        <div class="step" id="initialQuestionsStep">
+            <div class="question-card">
+                <div class="question-title" id="initialQuestionTitle"></div>
+                <div class="options-grid" id="initialOptionsGrid"></div>
+                <div class="navigation">
+                    <button class="btn" id="prevInitialBtn" onclick="previousInitialQuestion()" disabled>Previous</button>
+                    <button class="btn primary" id="nextInitialBtn" onclick="nextInitialQuestion()" disabled>Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journaling Step -->
+        <div class="step" id="journalingStep">
+            <div class="journaling-card">
+                <div class="journaling-question" id="journalingQuestion"></div>
+                <textarea class="journaling-textarea" id="journalingTextarea" placeholder="Type your thoughts here..."></textarea>
+                <div class="navigation">
+                    <button class="btn" id="prevJournalingBtn" onclick="previousJournalingQuestion()" disabled>Previous</button>
+                    <button class="btn primary" id="nextJournalingBtn" onclick="nextJournalingQuestion()" disabled>Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voice Analysis Step -->
+        <div class="step" id="voiceStep">
+            <div class="voice-card">
+                <div class="question-title">Optional: Voice Tone Analysis</div>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
+                    We'll ask you to say a few specific sentences to analyze your voice tone, pitch, and emotional state.
+                </p>
+                <div id="voicePromptsContainer">
+                    <!-- Voice prompts will be loaded here -->
+                </div>
+                <div class="navigation">
+                    <button class="btn" onclick="skipVoiceAnalysis()">Skip</button>
+                    <button class="btn primary" id="continueFromVoiceBtn" onclick="continueFromVoice()" disabled>Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optional Face Capture -->
+        <div class="step" id="faceStep">
+            <div class="question-card">
+                <div class="question-title">Optional: Capture your facial expression</div>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
+                    This helps us understand your emotional state better. Your photo is processed locally and not stored.
+                </p>
+                <div class="camera-container">
+                    <div class="camera-video-wrapper">
+                        <video id="cameraPreview" autoplay playsinline></video>
+                    </div>
+                    <canvas id="cameraCanvas" width="200" height="200" style="display: none;"></canvas>
+                    <img id="capturedImage" class="camera-preview" style="display: none;">
+                    <button class="camera-button" id="startCameraBtn" onclick="startCamera()">📷 Take Photo</button>
+                    <button class="camera-button" id="captureBtn" onclick="capturePhoto()" style="display: none;">📸 Capture</button>
+                    <button class="camera-button" id="retakeBtn" onclick="retakePhoto()" style="display: none;">🔄 Retake</button>
+                </div>
+                <div class="navigation">
+                    <button class="btn" onclick="skipFaceCapture()">Skip</button>
+                    <button class="btn primary" id="continueFromFaceBtn" onclick="continueFromFace()" disabled>Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Step -->
+        <div class="step analysis-step" id="analysisStep">
+            <div class="analysis-spinner"></div>
+            <div class="analysis-text" id="analysisText">Taking a moment to understand what you're experiencing...</div>
+            <div class="analysis-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Results Step -->
+        <div class="step" id="resultsStep">
+            <!-- Results will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        let currentInitialQuestion = 0;
+        let currentJournalingQuestion = 0;
+        let currentVoicePrompt = 0;
+        let initialQuestions = [];
+        let journalingPrompts = [];
+        let voicePrompts = [];
+        let initialResponses = {};
+        let journalingResponses = {};
+        let voiceRecordings = {};
+        let capturedImage = null;
+        let stream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+
+        // Initialize the check-in
+        async function initializeCheckIn() {
+            try {
+                const response = await fetch('/api/questions');
+                const data = await response.json();
+                initialQuestions = data.questions;
+                document.getElementById('welcomeMessage').textContent = data.welcome_message;
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                alert('Failed to load questions. Please refresh the page.');
+            }
+        }
+
+        function startCheckIn() {
+            showStep('initialQuestionsStep');
+            showInitialQuestion(0);
+            updateProgress();
+        }
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        function showInitialQuestion(index) {
+            if (index >= initialQuestions.length) {
+                loadJournalingPrompts();
+                return;
+            }
+
+            currentInitialQuestion = index;
+            const question = initialQuestions[index];
+            
+            document.getElementById('initialQuestionTitle').textContent = question.question;
+            
+            const optionsGrid = document.getElementById('initialOptionsGrid');
+            optionsGrid.innerHTML = '';
+            
+            question.options.forEach(option => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <div style="font-size: 2rem;">${option.emoji}</div>
+                    <div class="option-text">${option.text}</div>
+                `;
+                optionDiv.onclick = () => selectInitialOption(option.value, optionDiv);
+                optionsGrid.appendChild(optionDiv);
+            });
+            
+            updateInitialNavigation();
+            updateProgress();
+        }
+
+        function selectInitialOption(value, element) {
+            // Remove previous selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Select current option
+            element.classList.add('selected');
+            initialResponses[initialQuestions[currentInitialQuestion].id] = value;
+            
+            // Enable next button
+            document.getElementById('nextInitialBtn').disabled = false;
+        }
+
+        function nextInitialQuestion() {
+            if (currentInitialQuestion < initialQuestions.length - 1) {
+                showInitialQuestion(currentInitialQuestion + 1);
+            } else {
+                loadJournalingPrompts();
+            }
+        }
+
+        function previousInitialQuestion() {
+            if (currentInitialQuestion > 0) {
+                showInitialQuestion(currentInitialQuestion - 1);
+            }
+        }
+
+        function updateInitialNavigation() {
+            document.getElementById('prevInitialBtn').disabled = currentInitialQuestion === 0;
+            document.getElementById('nextInitialBtn').disabled = !initialResponses[initialQuestions[currentInitialQuestion].id];
+        }
+
+        async function loadJournalingPrompts() {
+            try {
+                const response = await fetch('/api/journaling-prompts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        responses: initialResponses
+                    })
+                });
+                
+                const data = await response.json();
+                journalingPrompts = data.journaling_prompts;
+                
+                showStep('journalingStep');
+                showJournalingQuestion(0);
+                updateProgress();
+                
+            } catch (error) {
+                console.error('Error loading journaling prompts:', error);
+                showVoiceAnalysis();
+            }
+        }
+
+        function showJournalingQuestion(index) {
+            if (index >= journalingPrompts.length) {
+                showVoiceAnalysis();
+                return;
+            }
+
+            currentJournalingQuestion = index;
+            const prompt = journalingPrompts[index];
+            
+            document.getElementById('journalingQuestion').textContent = prompt.question;
+            document.getElementById('journalingTextarea').placeholder = prompt.placeholder;
+            document.getElementById('journalingTextarea').value = journalingResponses[prompt.id] || '';
+            
+            updateJournalingNavigation();
+            updateProgress();
+        }
+
+        function nextJournalingQuestion() {
+            // Save current response
+            const currentPrompt = journalingPrompts[currentJournalingQuestion];
+            journalingResponses[currentPrompt.id] = document.getElementById('journalingTextarea').value;
+            
+            if (currentJournalingQuestion < journalingPrompts.length - 1) {
+                showJournalingQuestion(currentJournalingQuestion + 1);
+            } else {
+                showVoiceAnalysis();
+            }
+        }
+
+        function previousJournalingQuestion() {
+            // Save current response
+            const currentPrompt = journalingPrompts[currentJournalingQuestion];
+            journalingResponses[currentPrompt.id] = document.getElementById('journalingTextarea').value;
+            
+            if (currentJournalingQuestion > 0) {
+                showJournalingQuestion(currentJournalingQuestion - 1);
+            }
+        }
+
+        function updateJournalingNavigation() {
+            document.getElementById('prevJournalingBtn').disabled = currentJournalingQuestion === 0;
+            document.getElementById('nextJournalingBtn').disabled = false; // Always allow next
+        }
+
+        async function showVoiceAnalysis() {
+            try {
+                const response = await fetch('/api/voice-prompts');
+                const data = await response.json();
+                voicePrompts = data.voice_prompts;
+                
+                showStep('voiceStep');
+                showVoicePrompt(0);
+                updateProgress();
+                
+            } catch (error) {
+                console.error('Error loading voice prompts:', error);
+                showFaceCapture();
+            }
+        }
+
+        function showVoicePrompt(index) {
+            if (index >= voicePrompts.length) {
+                showFaceCapture();
+                return;
+            }
+
+            currentVoicePrompt = index;
+            const prompt = voicePrompts[index];
+            
+            const container = document.getElementById('voicePromptsContainer');
+            container.innerHTML = `
+                <div class="voice-prompt">
+                    <div class="voice-prompt-text">"${prompt.text}"</div>
+                    <div class="voice-prompt-instruction">${prompt.instruction}</div>
+                </div>
+                <div class="voice-controls">
+                    <button class="btn" id="recordBtn" onclick="toggleRecording()">🎙️ Start Recording</button>
+                    <button class="btn" id="playBtn" onclick="playRecording()" style="display: none;">▶️ Play</button>
+                    <button class="btn" id="nextVoiceBtn" onclick="nextVoicePrompt()" style="display: none;">Next Prompt</button>
+                </div>
+                <div id="recordingStatus" style="text-align: center; margin-top: 15px;"></div>
+            `;
+            
+            updateProgress();
+        }
+
+        let isRecording = false;
+
+        function toggleRecording() {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                recordedChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'audio/wav' });
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        voiceRecordings[voicePrompts[currentVoicePrompt].id] = reader.result;
+                    };
+                    reader.readAsDataURL(blob);
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+
+                const btn = document.getElementById('recordBtn');
+                btn.textContent = '⏹️ Stop Recording';
+                btn.classList.add('recording');
+                document.getElementById('recordingStatus').innerHTML = 
+                    '<div style="color: var(--accent); font-weight: 500;">🎙️ Recording... (speak for 3-5 seconds)</div>';
+
+            } catch (error) {
+                console.error('Recording error:', error);
+                alert('Microphone access denied. You can continue without voice analysis.');
+                nextVoicePrompt();
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+
+                const btn = document.getElementById('recordBtn');
+                btn.textContent = '🎙️ Start Recording';
+                btn.classList.remove('recording');
+                document.getElementById('recordingStatus').innerHTML = 
+                    '<div style="color: var(--secondary); font-weight: 500;">✅ Recording complete!</div>';
+
+                // Show play and next buttons
+                document.getElementById('playBtn').style.display = 'inline-block';
+                document.getElementById('nextVoiceBtn').style.display = 'inline-block';
+            }
+        }
+
+        function playRecording() {
+            // Check if recording exists
+            const currentPromptId = voicePrompts[currentVoicePrompt].id;
+            if (!voiceRecordings[currentPromptId]) {
+                alert('No recording to play');
+                return;
+            }
+
+            const audioDataUrl = voiceRecordings[currentPromptId];
+            
+            // Create audio element and play
+            const audio = new Audio(audioDataUrl);
+            
+            // Visual feedback
+            const playBtn = document.getElementById('playBtn');
+            playBtn.textContent = '⏸️ Stop';
+            playBtn.disabled = true;
+            
+            audio.onended = () => {
+                playBtn.textContent = '▶️ Play';
+                playBtn.disabled = false;
+            };
+            
+            audio.onerror = () => {
+                alert('Could not play recording');
+                playBtn.textContent = '▶️ Play';
+                playBtn.disabled = false;
+            };
+            
+            audio.play().catch(error => {
+                console.error('Playback error:', error);
+                alert('Playback failed. Continue to next prompt?');
+                playBtn.textContent = '▶️ Play';
+                playBtn.disabled = false;
+            });
+        }
+
+        function nextVoicePrompt() {
+            if (currentVoicePrompt < voicePrompts.length - 1) {
+                showVoicePrompt(currentVoicePrompt + 1);
+            } else {
+                showFaceCapture();
+            }
+        }
+
+        function skipVoiceAnalysis() {
+            voiceRecordings = {};
+            showFaceCapture();
+        }
+
+        function continueFromVoice() {
+            showFaceCapture();
+        }
+
+        function showFaceCapture() {
+            showStep('faceStep');
+            updateProgress();
+        }
+
+        async function startCamera() {
+            try {
+                // Stop any existing stream
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 300 }, 
+                        height: { ideal: 300 },
+                        facingMode: 'user'
+                    },
+                    audio: false
+                });
+                
+                const video = document.getElementById('cameraPreview');
+                video.srcObject = stream;
+                
+                // Make sure video plays
+                video.addEventListener('loadedmetadata', function() {
+                    video.play().catch(err => console.error('Play error:', err));
+                });
+                
+                // Show video wrapper and hide buttons
+                const wrapper = document.querySelector('.camera-video-wrapper');
+                if (wrapper) wrapper.style.display = 'block';
+                document.getElementById('startCameraBtn').style.display = 'none';
+                document.getElementById('capturedImage').style.display = 'none';
+                document.getElementById('captureBtn').style.display = 'inline-block';
+                document.getElementById('retakeBtn').style.display = 'none';
+                
+                console.log('✅ Camera started successfully');
+                
+            } catch (error) {
+                console.error('❌ Camera error:', error);
+                alert('Camera access denied or not available. You can continue without taking a photo.');
+                document.getElementById('startCameraBtn').style.display = 'inline-block';
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraPreview');
+            const canvas = document.getElementById('cameraCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            if (!video.srcObject) {
+                alert('Camera not ready. Please try again.');
+                return;
+            }
+            
+            // Set canvas size to match video
+            canvas.width = 300;
+            canvas.height = 300;
+            
+            // Draw video frame to canvas
+            ctx.drawImage(video, 0, 0, 300, 300);
+            
+            // Convert to data URL
+            capturedImage = canvas.toDataURL('image/jpeg', 0.8);
+            
+            console.log('📸 Photo captured');
+            
+            // Display captured image
+            const img = document.getElementById('capturedImage');
+            img.src = capturedImage;
+            img.style.display = 'block';
+            
+            // Hide video wrapper
+            const wrapper = document.querySelector('.camera-video-wrapper');
+            if (wrapper) wrapper.style.display = 'none';
+            
+            // Stop camera stream
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            // Update buttons
+            document.getElementById('captureBtn').style.display = 'none';
+            document.getElementById('retakeBtn').style.display = 'inline-block';
+            document.getElementById('continueFromFaceBtn').disabled = false;
+        }
+
+        function retakePhoto() {
+            console.log('🔄 Retaking photo');
+            document.getElementById('capturedImage').style.display = 'none';
+            document.getElementById('retakeBtn').style.display = 'none';
+            document.getElementById('continueFromFaceBtn').disabled = true;
+            startCamera();
+        }
+
+        function skipFaceCapture() {
+            capturedImage = null;
+            continueFromFace();
+        }
+
+        function continueFromFace() {
+            showStep('analysisStep');
+            updateProgress();
+            startAnalysis();
+        }
+
+        async function startAnalysis() {
+            // Update analysis text
+            const analysisTexts = [
+                "Taking a moment to understand what you're experiencing...",
+                "Reflecting on your responses...",
+                "Processing your emotional state...",
+                "Analyzing your feelings...",
+                "Understanding your current state..."
+            ];
+            
+            let textIndex = 0;
+            const textInterval = setInterval(() => {
+                document.getElementById('analysisText').textContent = analysisTexts[textIndex];
+                textIndex = (textIndex + 1) % analysisTexts.length;
+            }, 2000);
+            
+            // Perform analysis
+            try {
+                const analysisData = {
+                    initial_responses: initialResponses,
+                    journaling_responses: journalingResponses,
+                    face_image: capturedImage,
+                    voice_audio: Object.values(voiceRecordings)[0] // Use first recording for now
+                };
+                
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(analysisData)
+                });
+                
+                const result = await response.json();
+                
+                clearInterval(textInterval);
+                
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+                
+                // Show results
+                showResults(result);
+                
+            } catch (error) {
+                console.error('Analysis error:', error);
+                clearInterval(textInterval);
+                document.getElementById('analysisText').textContent = 'Analysis complete. Loading results...';
+                setTimeout(() => {
+                    showResults({
+                        emotion: 'neutral',
+                        emotion_name: 'Neutral',
+                        emotion_emoji: '😐',
+                        confidence: 0.5,
+                        description: 'Unable to determine emotion clearly',
+                        indicators: ['Analysis incomplete'],
+                        immediate_actions: [],
+                        short_term_actions: []
+                    });
+                }, 1000);
+            }
+        }
+
+        function showResults(result) {
+            showStep('resultsStep');
+            updateProgress();
+            
+            const resultsHTML = `
+                <div class="question-card">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">${result.emotion_emoji}</div>
+                        <h2 style="font-size: 2rem; color: var(--text-primary); margin-bottom: 10px;">
+                            Right Now, You're Feeling: ${result.emotion_name.toUpperCase()}
+                        </h2>
+                        <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                            ${result.description}
+                        </p>
+                        <div style="margin-top: 20px;">
+                            <div style="background: var(--background); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                                <strong>Confidence:</strong> ${Math.round(result.confidence * 100)}%
+                            </div>
+                            <div style="background: var(--background); padding: 15px; border-radius: 12px;">
+                                <strong>Indicators:</strong> ${result.indicators.join(', ')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: var(--text-primary); margin-bottom: 15px;">⚡ DO THIS RIGHT NOW (2 min):</h3>
+                        <div style="display: grid; gap: 10px;">
+                            ${result.immediate_actions.map(action => `
+                                <button class="btn" onclick="showActionDetails('${action.name}')" style="text-align: left; justify-content: flex-start;">
+                                    ${action.type_icon} ${action.name} (${action.duration})
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: var(--text-primary); margin-bottom: 15px;">📝 NEXT 30 MINUTES:</h3>
+                        <div style="display: grid; gap: 10px;">
+                            ${result.short_term_actions.map(action => `
+                                <button class="btn" onclick="showActionDetails('${action.name}')" style="text-align: left; justify-content: flex-start;">
+                                    ${action.type_icon} ${action.name} (${action.duration})
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn" onclick="startNewCheckIn()" style="margin-right: 10px;">🔄 New Check-in</button>
+                        <button class="btn" onclick="viewPatterns()">📊 View Patterns</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('resultsStep').innerHTML = resultsHTML;
+        }
+
+        function showActionDetails(actionName) {
+            // This would open a modal or new page with detailed action instructions
+            alert(`Action details for: ${actionName}\n\nThis would show detailed instructions, audio guides, and step-by-step guidance.`);
+        }
+
+        function startNewCheckIn() {
+            // Reset everything
+            currentInitialQuestion = 0;
+            currentJournalingQuestion = 0;
+            currentVoicePrompt = 0;
+            initialResponses = {};
+            journalingResponses = {};
+            voiceRecordings = {};
+            capturedImage = null;
+            
+            // Reset UI
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Start over
+            showStep('welcomeStep');
+            updateProgress();
+        }
+
+        function viewPatterns() {
+            window.location.href = '/history';
+        }
+
+        function updateProgress() {
+            const totalSteps = 6; // welcome + initial + journaling + voice + face + analysis + results
+            let currentStep = 0;
+            
+            if (document.getElementById('welcomeStep').classList.contains('active')) {
+                currentStep = 0;
+            } else if (document.getElementById('initialQuestionsStep').classList.contains('active')) {
+                currentStep = 1;
+            } else if (document.getElementById('journalingStep').classList.contains('active')) {
+                currentStep = 2;
+            } else if (document.getElementById('voiceStep').classList.contains('active')) {
+                currentStep = 3;
+            } else if (document.getElementById('faceStep').classList.contains('active')) {
+                currentStep = 4;
+            } else if (document.getElementById('analysisStep').classList.contains('active')) {
+                currentStep = 5;
+            }
+            
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeCheckIn);
+    </script>
+</body>
+</html>

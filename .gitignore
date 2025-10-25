@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+moodlens-env/
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Flask
+instance/
+.webassets-cache
+*.db
+*.sqlite
+
+# Data files (generated at runtime)
+emotional_patterns.json
+text_emotion_cache.json
+*.jpg
+*.png
+*.wav
+temp_*
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+
+# Model cache
+.cache/
+models/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodLens - Results</title>
+    <style>
+        :root {
+            --primary: #A8DADC;
+            --secondary: #B7C9A9;
+            --accent: #F4B9B2;
+            --background: #FAFAFA;
+            --text-primary: #2F2F2F;
+            --text-secondary: #707070;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 0;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .card h2 {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #9BB89A;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn.primary {
+            background: var(--accent);
+        }
+
+        .btn.primary:hover {
+            background: #E8A39B;
+        }
+
+        .action-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .action-item {
+            background: var(--background);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-item:hover {
+            background: #F0F0F0;
+            transform: translateX(5px);
+        }
+
+        .action-item h4 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .action-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .emergency-section {
+            background: #FFF5F5;
+            border: 2px solid #FFE0E0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .emergency-section h3 {
+            color: #D32F2F;
+            margin-bottom: 15px;
+        }
+
+        .emergency-resource {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #D32F2F;
+        }
+
+        .emergency-resource h4 {
+            color: #D32F2F;
+            margin-bottom: 5px;
+        }
+
+        .emergency-resource p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .emergency-resource .number {
+            font-weight: bold;
+            color: #D32F2F;
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .nav-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--background);
+            padding-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            transform: rotate(90deg);
+        }
+
+        .modal-content {
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .modal-content h3 {
+            color: var(--primary);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .modal-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-content p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .modal-content ul {
+            list-style-position: inside;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .modal-content li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .modal-content strong {
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--background);
+            text-align: center;
+        }
+
+        .modal-footer .btn {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 MoodLens Results</h1>
+            <p>Your emotional wellness resources</p>
+        </div>
+
+        <div class="nav-bar">
+            <a href="/" class="nav-link">🏠 Check-in</a>
+            <a href="/history" class="nav-link">📊 Patterns</a>
+            <a href="/results" class="nav-link active">📋 Results</a>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Quick Actions</h2>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                Here are some quick actions you can take right now to support your emotional wellness:
+            </p>
+            
+            <div class="action-grid">
+                <div class="action-item" onclick="showBreathingExercise()">
+                    <h4>🫁 Breathing Exercise</h4>
+                    <p>3-minute guided breathing to help you feel more centered and calm.</p>
+                </div>
+                
+                <div class="action-item" onclick="showGroundingExercise()">
+                    <h4>🌍 Grounding Technique</h4>
+                    <p>5-4-3-2-1 grounding exercise to help you feel present and safe.</p>
+                </div>
+                
+                <div class="action-item" onclick="showBodyScan()">
+                    <h4>🧘 Body Scan</h4>
+                    <p>Gentle body awareness exercise to release tension and connect with your body.</p>
+                </div>
+                
+                <div class="action-item" onclick="showJournaling()">
+                    <h4>📝 Journaling</h4>
+                    <p>Guided writing prompts to help you process and understand your emotions.</p>
+                </div>
+                
+                <div class="action-item" onclick="showMovement()">
+                    <h4>🏃 Gentle Movement</h4>
+                    <p>Simple physical exercises to help release tension and boost your mood.</p>
+                </div>
+                
+                <div class="action-item" onclick="showMindfulness()">
+                    <h4>🧘 Mindfulness</h4>
+                    <p>Present-moment awareness practices to help you feel more grounded.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📚 Learning Resources</h2>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                Learn more about emotional wellness and mental health:
+            </p>
+            
+            <div class="action-grid">
+                <div class="action-item" onclick="showEmotionEducation()">
+                    <h4>🎓 Understanding Emotions</h4>
+                    <p>Learn about different emotions and how to work with them effectively.</p>
+                </div>
+                
+                <div class="action-item" onclick="showStressManagement()">
+                    <h4>😌 Stress Management</h4>
+                    <p>Techniques and strategies for managing stress in daily life.</p>
+                </div>
+                
+                <div class="action-item" onclick="showSelfCare()">
+                    <h4>🛁 Self-Care Practices</h4>
+                    <p>Ideas and activities to support your overall well-being.</p>
+                </div>
+                
+                <div class="action-item" onclick="showSleepHygiene()">
+                    <h4>😴 Sleep & Rest</h4>
+                    <p>Tips for better sleep and restorative rest practices.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="emergency-section">
+            <h3>🚨 Emergency Resources</h3>
+            <p style="margin-bottom: 15px; color: var(--text-secondary);">
+                If you're in crisis or need immediate support, these resources are available 24/7:
+            </p>
+            
+            <div class="emergency-resource">
+                <h4>Crisis Text Line</h4>
+                <p>Free, 24/7 crisis support via text message</p>
+                <div class="number">Text HOME to 741741</div>
+            </div>
+            
+            <div class="emergency-resource">
+                <h4>National Suicide Prevention Lifeline</h4>
+                <p>Free, 24/7 suicide prevention support</p>
+                <div class="number">988</div>
+            </div>
+            
+            <div class="emergency-resource">
+                <h4>Emergency Services</h4>
+                <p>For immediate life-threatening emergencies</p>
+                <div class="number">911</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" class="btn primary">🔄 New Check-in</a>
+            <a href="/history" class="btn">📊 View Patterns</a>
+        </div>
+    </div>
+
+    <div id="breathingExerciseModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🫁 Breathing Exercise</h2>
+                <button class="modal-close" onclick="closeModal('breathingExerciseModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>A 3-minute guided breathing exercise designed to help you feel more centered and calm. It's a simple yet powerful technique that can be done anywhere, anytime.</p>
+                <h3>How to do it:</h3>
+                <p>1. Sit comfortably and close your eyes. Make sure your back is straight and you're in a quiet environment.</p>
+                <p>2. Breathe in slowly for 4 counts (inhale).</p>
+                <p>3. Hold your breath for 4 counts (hold).</p>
+                <p>4. Breathe out slowly for 6 counts (exhale).</p>
+                <p>5. Repeat this cycle 3 times.</p>
+                <p>6. Notice how you feel after the exercise.</p>
+                <p>This exercise helps activate your parasympathetic nervous system and promotes calm.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('breathingExerciseModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="groundingExerciseModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🌍 Grounding Technique</h2>
+                <button class="modal-close" onclick="closeModal('groundingExerciseModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>A 5-4-3-2-1 grounding exercise that helps you feel present and safe in moments of anxiety or overwhelm.</p>
+                <h3>How to do it:</h3>
+                <p>1. Name 5 things you can see around you.</p>
+                <p>2. Name 4 things you can touch.</p>
+                <p>3. Name 3 things you can hear.</p>
+                <p>4. Name 2 things you can smell.</p>
+                <p>5. Name 1 thing you can taste.</p>
+                <p>6. Take a deep breath and notice you're here.</p>
+                <p>This technique helps ground you in the present moment and reduce anxiety.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('groundingExerciseModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bodyScanModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🧘 Body Scan</h2>
+                <button class="modal-close" onclick="closeModal('bodyScanModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>A gentle body awareness exercise that helps you release tension and connect with your body.</p>
+                <h3>How to do it:</h3>
+                <p>1. Start at the top of your head and notice any tension or sensations.</p>
+                <p>2. Move down to your shoulders and notice any tightness.</p>
+                <p>3. Check your chest and breathing.</p>
+                <p>4. Notice your stomach area and any discomfort.</p>
+                <p>5. Feel your legs and feet.</p>
+                <p>6. Take a deep breath.</p>
+                <p>This helps you connect with your body and release tension.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('bodyScanModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="journalingModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📝 Journaling</h2>
+                <button class="modal-close" onclick="closeModal('journalingModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>Guided writing prompts to help you process and understand your emotions.</p>
+                <h3>How to do it:</h3>
+                <p>Try writing about:</p>
+                <ul>
+                    <li>What am I feeling right now?</li>
+                    <li>What might be causing these feelings?</li>
+                    <li>What do I need right now?</li>
+                    <li>What am I grateful for today?</li>
+                    <li>What would I tell a friend in this situation?</li>
+                </ul>
+                <p>Writing helps process emotions and gain clarity.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('journalingModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="movementModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🏃 Gentle Movement</h2>
+                <button class="modal-close" onclick="closeModal('movementModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>Simple physical exercises to help release tension and boost your mood.</p>
+                <h3>How to do it:</h3>
+                <p>Try these simple movements:</p>
+                <ul>
+                    <li>10 jumping jacks</li>
+                    <li>Gentle neck rolls</li>
+                    <li>Shoulder shrugs</li>
+                    <li>Arm circles</li>
+                    <li>Walking in place</li>
+                    <li>Gentle stretching</li>
+                </ul>
+                <p>Movement helps release tension and boost mood.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('movementModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mindfulnessModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🧘 Mindfulness</h2>
+                <button class="modal-close" onclick="closeModal('mindfulnessModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>Present-moment awareness practices to help you feel more grounded.</p>
+                <h3>How to do it:</h3>
+                <p>• Focus on your breathing</p>
+                <p>• Notice sounds around you</p>
+                <p>• Feel your body in the chair</p>
+                <p>• Observe your thoughts without judgment</p>
+                <p>• Return attention to your breath</p>
+                <p>• Practice for 5-10 minutes</p>
+                <p>Mindfulness helps you stay present and centered.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('mindfulnessModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="emotionEducationModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🎓 Understanding Emotions</h2>
+                <button class="modal-close" onclick="closeModal('emotionEducationModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>Learn about different emotions and how to work with them effectively.</p>
+                <h3>Key Points:</h3>
+                <ul>
+                    <li>All emotions are valid and serve a purpose</li>
+                    <li>Emotions are temporary and will pass</li>
+                    <li>It's okay to feel multiple emotions at once</li>
+                    <li>Emotions provide information about your needs</li>
+                    <li>You can learn to work with difficult emotions</li>
+                    <li>Seeking help is a sign of strength</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('emotionEducationModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="stressManagementModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>😌 Stress Management</h2>
+                <button class="modal-close" onclick="closeModal('stressManagementModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>Techniques and strategies for managing stress in daily life.</p>
+                <h3>Key Points:</h3>
+                <ul>
+                    <li>Identify your stress triggers</li>
+                    <li>Practice deep breathing regularly</li>
+                    <li>Take breaks throughout the day</li>
+                    <li>Set realistic expectations</li>
+                    <li>Ask for help when needed</li>
+                    <li>Maintain a regular sleep schedule</li>
+                    <li>Exercise regularly</li>
+                    <li>Connect with supportive people</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('stressManagementModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="selfCareModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🛁 Self-Care Practices</h2>
+                <button class="modal-close" onclick="closeModal('selfCareModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>Ideas and activities to support your overall well-being.</p>
+                <h3>Key Points:</h3>
+                <ul>
+                    <li>Take time for activities you enjoy</li>
+                    <li>Maintain healthy boundaries</li>
+                    <li>Practice self-compassion</li>
+                    <li>Get adequate sleep</li>
+                    <li>Eat nourishing foods</li>
+                    <li>Stay hydrated</li>
+                    <li>Spend time in nature</li>
+                    <li>Connect with loved ones</li>
+                    <li>Engage in hobbies</li>
+                    <li>Practice gratitude</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('selfCareModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sleepHygieneModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>😴 Sleep & Rest</h2>
+                <button class="modal-close" onclick="closeModal('sleepHygieneModal')">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h3>What is it?</h3>
+                <p>Tips for better sleep and restorative rest practices.</p>
+                <h3>Key Points:</h3>
+                <ul>
+                    <li>Maintain a consistent sleep schedule</li>
+                    <li>Create a relaxing bedtime routine</li>
+                    <li>Keep your bedroom cool and dark</li>
+                    <li>Avoid screens before bed</li>
+                    <li>Limit caffeine in the afternoon</li>
+                    <li>Exercise regularly (but not too close to bedtime)</li>
+                    <li>Avoid large meals before bed</li>
+                    <li>Create a comfortable sleep environment</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeModal('sleepHygieneModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showBreathingExercise() {
+            document.getElementById('breathingExerciseModal').classList.add('active');
+        }
+
+        function showGroundingExercise() {
+            document.getElementById('groundingExerciseModal').classList.add('active');
+        }
+
+        function showBodyScan() {
+            document.getElementById('bodyScanModal').classList.add('active');
+        }
+
+        function showJournaling() {
+            document.getElementById('journalingModal').classList.add('active');
+        }
+
+        function showMovement() {
+            document.getElementById('movementModal').classList.add('active');
+        }
+
+        function showMindfulness() {
+            document.getElementById('mindfulnessModal').classList.add('active');
+        }
+
+        function showEmotionEducation() {
+            document.getElementById('emotionEducationModal').classList.add('active');
+        }
+
+        function showStressManagement() {
+            document.getElementById('stressManagementModal').classList.add('active');
+        }
+
+        function showSelfCare() {
+            document.getElementById('selfCareModal').classList.add('active');
+        }
+
+        function showSleepHygiene() {
+            document.getElementById('sleepHygieneModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+    </script>
+</body>
+</html>
+
