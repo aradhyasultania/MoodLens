@@ -8,7 +8,7 @@
 
 ---
 
-## 🎯 Key Features
+## Key Features
 
 ### Multimodal Emotion Detection
 - **Facial Recognition** - Real-time emotion detection using computer vision (OpenCV + Hugging Face)
@@ -31,7 +31,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
 - **Python 3.9+** - Core language
@@ -57,7 +57,7 @@
 
 ---
 
-## 📊 Project Architecture
+## Project Architecture
 
 ```
 moodlens-project/
@@ -90,7 +90,7 @@ moodlens-project/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.9 or higher
@@ -134,7 +134,7 @@ http://localhost:5001
 
 ---
 
-## 💻 Usage
+## Usage
 
 ### Emotional Check-in Flow
 
@@ -163,7 +163,7 @@ Click any action to see:
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Run the comprehensive test suite:
 
@@ -189,7 +189,7 @@ python test_system.py
 
 ---
 
-## 📈 Performance Metrics
+## Performance Metrics
 
 - **Emotion Detection Accuracy**: 85-100% across 8 categories
 - **Page Load Time**: <500ms (95% improvement from initial infinite spinner)
@@ -200,7 +200,7 @@ python test_system.py
 
 ---
 
-## 🎨 UI/UX Features
+## UI/UX Features
 
 ### Design Philosophy
 - **Color Palette**: Soft Blue (#A8DADC), Sage Green (#B7C9A9), Warm Coral (#F4B9B2)
@@ -217,7 +217,7 @@ python test_system.py
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Emotion Detection Weights
 Located in `emotion_detector.py`:
@@ -235,7 +235,7 @@ Located in `emotion_detector.py`:
 
 ---
 
-## 📝 API Endpoints
+## API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -251,7 +251,7 @@ Located in `emotion_detector.py`:
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -263,13 +263,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+##Acknowledgments
 
 - **Hugging Face** - Pre-trained transformer models
 - **OpenCV** - Computer vision library
@@ -278,13 +278,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📧 Contact
+## Contact
 
-**Project Link**: [https://github.com/yourusername/moodlens](https://github.com/yourusername/moodlens)
+**Project Link**: [https://github.com/aradhyasultania/MoodLens](https://github.com/aradhyasultania/MoodLens)
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - [ ] Database integration (PostgreSQL/MongoDB)
 - [ ] User authentication & profiles
@@ -297,5 +297,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ for mental wellness**
+
 
